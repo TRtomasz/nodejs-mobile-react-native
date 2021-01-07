@@ -55,7 +55,9 @@ public class NodeService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        startForeground(1, createNotification());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForeground(1, createNotification());
+        }
     }
 
     private void startService() {
@@ -68,9 +70,9 @@ public class NodeService extends Service {
         mNodeThread = new Thread(new Runnable() {
             @Override
             public void run() {
-                          Log.i("NODEJS", "NODE");
+                Log.i("NODEJS", "NODE");
                 startNodeWithArguments(new String[]{"node", "-e",
-                                 "streamingServer.js"
+                                "streamingServer.js"
                         },
                         nodeDir + ":" + modulesDir,
                         true
@@ -110,7 +112,7 @@ public class NodeService extends Service {
         }
         Notification.Builder builder = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ? new Notification.Builder(this, notificationChannelId) : new Notification.Builder(this);
         return builder
-                .setContentTitle(("Stremio Server"))
+                .setContentTitle("Stremio Server")
                 .setContentText("Stremio server is running")
                 .setPriority(Notification.PRIORITY_HIGH)
                 .build();
