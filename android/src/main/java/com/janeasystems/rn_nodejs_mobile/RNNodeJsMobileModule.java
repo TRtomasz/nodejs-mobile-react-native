@@ -14,6 +14,10 @@ import com.facebook.react.bridge.LifecycleEventListener;
 import javax.annotation.Nullable;
 import android.util.Log;
 
+
+import android.os.Build;
+import android.content.Intent;
+
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.content.pm.PackageInfo;
@@ -184,6 +188,27 @@ public class RNNodeJsMobileModule extends ReactContextBaseJavaModule implements 
             nodeJsProjectPath + ":" + builtinModulesPath,
             redirectOutputToLogcat
           );
+        }
+      }).start();
+    }
+  }
+
+  @ReactMethod
+  public void startStreamingServerService() throws Exception {
+    _instance = this;
+    if(!_startedNodeAlready) {
+      _startedNodeAlready = true;
+      new Thread(new Runnable() {
+        @Override
+        public void run() {
+          waitForInit();
+          Log.i("NODEJS", "STARTUJE");
+          Intent intent = new Intent(getReactApplicationContext(), NodeService.class);
+          intent.setAction("START");
+          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            getReactApplicationContext().startForegroundService(intent);
+          }
+          getReactApplicationContext().startService(intent);
         }
       }).start();
     }

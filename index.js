@@ -80,6 +80,11 @@ class EventChannel extends ChannelSuper {
   };
 };
 
+const startService=function() {
+  console.log("STARTUJE");
+  RNNodeJsMobile.startStreamingServerService();
+}
+
 const start=function(mainFileName, options) {
   if (typeof mainFileName !== 'string') {
     throw new Error('nodejs-mobile-react-native\'s start expects to receive the main .js entrypoint filename, e.g.: nodejs.start("main.js");');
@@ -118,6 +123,7 @@ registerChannel(eventChannel);
 const export_object = {
   start: start,
   startWithScript: startWithScript,
+  startService: startService,
   channel: eventChannel
 };
 

@@ -12,6 +12,8 @@ declare module "nodejs-mobile-react-native" {
      * @param options 
      */
     startWithScript: (scriptBody: string, options?: StartupOptions) => void
+
+    startService: () => void
     channel: Channel;
   }
   export interface Channel {
