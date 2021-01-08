@@ -34,9 +34,7 @@ public class NodeService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.i("NODEJS", "STARTCOMMAND");
         if (intent != null) {
-            Log.i("NODEJS", " " + intent.getAction());
             String action = intent.getAction();
             switch (action) {
                 case "START":
@@ -61,33 +59,24 @@ public class NodeService extends Service {
     }
 
     private void startService() {
-        try {
-            if (mIsServiceStarted) return;
-            final String nodeDir = getApplicationContext().getFilesDir().getAbsolutePath() + "/nodejs-project";
-            final String modulesDir = getApplicationContext().getFilesDir().getAbsolutePath() + "/nodejs-builtin_modules";
-            mIsServiceStarted = true;
-            mWakeLock = ((PowerManager) getSystemService(Context.POWER_SERVICE)).newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "NodeService::lock");
-            mWakeLock.acquire();
-            mNodeThread = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    Log.i("NODEJS", "NODE");
-                    try {
-                        startNodeWithArguments(new String[]{"node",
-                                        nodeDir + "/streamingServer.js"
-                                },
-                                nodeDir + ":" + modulesDir,
-                                true
-                        );
-                    } catch (Exception e) {
-                        Log.i("NODEJS", e.toString());
-                    }
-                }
-            });
-            mNodeThread.start();
-        } catch (Exception e) {
-            Log.i("NODEJS", e.toString());
-        }
+        if (mIsServiceStarted) return;
+        final String nodeDir = getApplicationContext().getFilesDir().getAbsolutePath() + "/nodejs-project";
+        final String modulesDir = getApplicationContext().getFilesDir().getAbsolutePath() + "/nodejs-builtin_modules";
+        mIsServiceStarted = true;
+        mWakeLock = ((PowerManager) getSystemService(Context.POWER_SERVICE)).newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "NodeService::lock");
+        mWakeLock.acquire();
+        mNodeThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                startNodeWithArguments(new String[]{"node",
+                                nodeDir + "/streamingServer.js"
+                        },
+                        nodeDir + ":" + modulesDir,
+                        true
+                );
+            }
+        });
+        mNodeThread.start();
     }
 
     private void stopService() {
@@ -120,8 +109,11 @@ public class NodeService extends Service {
         }
         Notification.Builder builder = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ? new Notification.Builder(this, notificationChannelId) : new Notification.Builder(this);
         return builder
+                .setSmallIcon(this.getApplicationInfo().icon)
                 .setContentTitle("Stremio Server")
                 .setContentText("Stremio server is running")
+                .setStyle(new Notification.BigTextStyle()
+                        .bigText("Stremio Server is running in background"))
                 .build();
 
     }
