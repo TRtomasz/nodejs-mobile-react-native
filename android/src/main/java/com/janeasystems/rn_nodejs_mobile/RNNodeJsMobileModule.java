@@ -206,11 +206,11 @@ public class RNNodeJsMobileModule extends ReactContextBaseJavaModule implements 
                 public void run() {
                     waitForInit();
                     nodeIntent = new Intent(getCurrentActivity(), NodeService.class);
-                    intent.setAction("START");
+                    nodeIntent.setAction("START");
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        getCurrentActivity().startForegroundService(intent);
+                        getCurrentActivity().startForegroundService(nodeIntent);
                     } else {
-                        getCurrentActivity().startService(intent);
+                        getCurrentActivity().startService(nodeIntent);
                     }
                 }
             }).start();
