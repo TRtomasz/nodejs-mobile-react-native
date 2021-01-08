@@ -34,6 +34,7 @@ public class NodeService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.i("NODEJS", "stcommand");
         if (intent != null) {
             String action = intent.getAction();
             switch (action) {
@@ -53,12 +54,25 @@ public class NodeService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            startForeground(11470, createNotification());
-        }
+        Log.i("NODEJS", "create");
+        startForeground((int)(System.currentTimeMillis()%10000), createNotification());
     }
 
+
+    @Override
+    public void onTaskRemoved(Intent rootIntent) {
+        Log.i("NODEJS", "removed");
+        super.onTaskRemoved(rootIntent);
+        Intent intent = new Intent(this, NodeService.class);
+        intent.setAction("STOP");
+        startService(intent);
+        System.exit(0);
+    }
+
+
+
     private void startService() {
+        Log.i("NODEJS", "start");
         if (mIsServiceStarted) return;
         final String nodeDir = getApplicationContext().getFilesDir().getAbsolutePath() + "/nodejs-project";
         final String modulesDir = getApplicationContext().getFilesDir().getAbsolutePath() + "/nodejs-builtin_modules";
@@ -113,7 +127,7 @@ public class NodeService extends Service {
                 .setContentTitle("Stremio Server")
                 .setContentText("Stremio server is running")
                 .setStyle(new Notification.BigTextStyle()
-                        .bigText("Stremio Server is running in background"))
+                        .bigText("Stremio Server is running in the background"))
                 .build();
 
     }
